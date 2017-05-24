@@ -37,16 +37,15 @@ class Network(object):
                         for x, y in zip(sizes[:-1], sizes[1:])]
 
     def feedforward(self, a):
-        def feedforward(self, a):
-            """
-            前向传输计算每个神经元的值
-            :param a: 输入值
-            :return: 计算后每个神经元的值
-            """
-            for b, w in zip(self.biases, self.weights):
-                # 加权求和以及加上 biase
-                a = sigmoid(np.dot(w, a) + b)
-            return a
+        """
+        前向传输计算每个神经元的值
+        :param a: 输入值
+        :return: 计算后每个神经元的值
+        """
+        for b, w in zip(self.biases, self.weights):
+            # 加权求和以及加上 biase
+            a = sigmoid(np.dot(w, a) + b)
+        return a
 
     def SGD(self, training_data, epochs, mini_batch_size, eta,
             test_data=None):
