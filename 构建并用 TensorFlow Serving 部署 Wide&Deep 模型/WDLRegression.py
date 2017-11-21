@@ -116,41 +116,6 @@ def build_wdl(deep_input, wide_input, y):
     return train_step, loss, prediction
 
 
-def save_as_servable_model():
-    """ 保存成可以供 tensorflow serving 使用的模型文件，
-    具体的可以参考官方文档：https://www.tensorflow.org/serving/serving_basic
-    要调参数就直接修改代码吧
-    之前训练的时候是用 saver 保存的模型，所以这里是对 saver 格式保存的模型做一次转换
-    """
-    x_deep = tf.placeholder(tf.float32, [None, 200])
-    x_wide = tf.placeholder(tf.float32, [None, 134])
-    y = tf.placeholder(tf.float32, [None, 1])
-    _, _, prediction = build_wdl(x_deep, x_wide, y)
-    saver = tf.train.Saver()
-    init = tf.global_variables_initializer()
-    with tf.Session() as sess:
-        sess.run(init)
-        # 妈了个鸡，很奇怪，下面两个路径的字符串换成变量后，会报错，不知道为毛
-        saver.restore(sess,
-                      "/Users/edvard/Workspace/huya_ai/tools/local_visual_inspection/static/model/wdl_watchlist2vec/wdl_net.ckpt")
-
-        builder = tf.saved_model.builder.SavedModelBuilder(
-            "/Users/edvard/Workspace/huya_ai/tools/local_visual_inspection/static/model/test_wdl_saved_model")
-        inputs = {
-            "x_wide": tf.saved_model.utils.build_tensor_info(x_wide),
-            "x_deep": tf.saved_model.utils.build_tensor_info(x_deep)
-        }
-        output = {"output": tf.saved_model.utils.build_tensor_info(prediction)}
-        signature = tf.saved_model.signature_def_utils.build_signature_def(
-            inputs=inputs,
-            outputs=output,
-            method_name=tf.saved_model.signature_constants.PREDICT_METHOD_NAME
-        )
-
-        builder.add_meta_graph_and_variables(sess, [tf.saved_model.tag_constants.SERVING], {"wdl_signature": signature})
-        builder.save()
-
-
 MODEL_VERSION = '1'
 INPUT_WIDE_KEY = 'x_wide'
 INPUT_DEEP_KEY = 'x_deep'
