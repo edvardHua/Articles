@@ -107,11 +107,7 @@ def build_wdl(deep_input, wide_input, y):
         tf.matmul(wmodel, wmodel_weight)
     )
 
-<<<<<<< HEAD
-    prediction = tf.nn.sigmoid(tf.add(network, central_bias), name="prediction")
-=======
     prediction = tf.add(network, central_bias)
->>>>>>> c1097c02f58f4cf02f62fd50592a8a655d43128c
 
     loss = tf.reduce_mean(
         tf.nn.sigmoid_cross_entropy_with_logits(labels=y, logits=prediction)
